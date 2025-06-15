@@ -1,15 +1,29 @@
-// Це має бути один з перших рядків у вашому server.js
+// server.js
+
 require('dotenv').config();
 
-// Тепер ви можете використовувати process.env.MONGO_URI
 const express = require('express');
 const mongoose = require('mongoose');
-const userRoutes = require('./routes/userRoutes'); // Переконайтеся, що цей шлях коректний
+const userRoutes = require('./routes/userRoutes');
+const cors = require('cors'); // <--- Додайте цей рядок
+
 
 const app = express();
 
-// Middleware (проміжне ПЗ), якщо потрібно (наприклад, для парсингу JSON)
-app.use(express.json());
+// CORS Configuration - Додайте цей блок коду ПЕРЕД вашими маршрутами
+// Для розробки можна дозволити всім, але для продакшну краще обмежити
+app.use(cors({
+    origin: 'https://ВАШ_ФРОНТЕНД_ДОМЕН.com', // <--- Замініть на реальний домен вашого фронтенду
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Дозволені методи HTTP
+    credentials: true // Дозволяє надсилати cookie та HTTP-аутентифікацію
+}));
+
+// Або, якщо для розробки ви хочете дозволити ВСІМ підключення (НЕ РЕКОМЕНДУЄТЬСЯ ДЛЯ ПРОДАКШНУ)
+// app.use(cors());
+
+
+app.use(express.json()); // Для парсингу JSON-тіл запитів
+
 
 // Ваш код для підключення до MongoDB
 mongoose.connect(process.env.MONGO_URI, {
@@ -21,20 +35,18 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .catch(err => {
     console.error('Помилка підключення до MongoDB:', err);
-    process.exit(1); // Виходимо з процесу, якщо не вдалося підключитися
+    process.exit(1);
 });
 
 // --- Маршрути API ---
-// Всі запити до /api/users будуть оброблятися userRoutes
 app.use('/api/users', userRoutes);
 
-// Тестовий маршрут (можна видалити після перевірки)
+// Тестовий маршрут
 app.get('/', (req, res) => {
     res.send('Бекенд SCP Foundation працює!');
 });
 
 // --- Запуск сервера ---
-// Визначення порту: беремо з .env або використовуємо 5000 за замовчуванням
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
