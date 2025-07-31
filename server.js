@@ -8,16 +8,16 @@ const userRoutes = require('./routes/userRoutes');
 const cors = require('cors'); // <--- Додайте цей рядок
 
 
-const app = express();
+const cors = require('cors');
 
-// CORS Configuration - Додайте цей блок коду ПЕРЕД вашими маршрутами
-// Для розробки можна дозволити всім, але для продакшну краще обмежити
+// Налаштування CORS, щоб дозволити підключення з вашого фронтенду
 app.use(cors({
-    origin: 'https://ВАШ_ФРОНТЕНД_ДОМЕН.com', // <--- Замініть на реальний домен вашого фронтенду
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Дозволені методи HTTP
-    credentials: true // Дозволяє надсилати cookie та HTTP-аутентифікацію
+    // Вставте сюди Public URL вашого фронтенд-сервісу (scp-forum-fc)
+    // Він повинен виглядати приблизно так: 'https://scp-forum-fc.onrender.com'
+    origin: 'https://ВАША_ФРОНТЕНД_URL.onrender.com', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    credentials: true 
 }));
-
 // Або, якщо для розробки ви хочете дозволити ВСІМ підключення (НЕ РЕКОМЕНДУЄТЬСЯ ДЛЯ ПРОДАКШНУ)
 // app.use(cors());
 
